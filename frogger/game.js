@@ -23,12 +23,28 @@ function initializeParameters()
 function gameLoop(frogx, frogy, lives, gameover, level_number, time, vehicle_spawn_locations,
 					log_spawn_locations, vehicle_speed, log_speed)
 {
-	console.log(frogy);
-	var gameon = false; //for now
+	console.log(frogx);
+	var gameon = true;
 	
 	while(gameon)
 	{
-		
+		drawScreen();
+		gameon = false //for now
 	}
 	
+}
+
+//In game methods:
+function drawScreen()
+{
+	var canvas = document.getElementById('game');
+	var ctx = canvas.getContext('2d');
+	
+	//Draw water
+	ctx.fillStyle = "#191970";
+	ctx.fillRect(0, 0, 399, 282);
+	
+	//Draw road
+	ctx.fillStyle = "#000000";
+	ctx.fillRect(0, 282, 399, 282);
 }
