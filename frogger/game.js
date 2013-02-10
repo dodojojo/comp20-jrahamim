@@ -1,8 +1,3 @@
-//Write game as a class with default parameters,
-//Initialization method sets parameters, spritesheet etc
-//newgame init method resets game
-//new game
-//game.run
 
 function start_game()
 {
@@ -12,8 +7,8 @@ function start_game()
 
 function Frogger_game(){
 	//Default values for a new game, to be used when starting a new game
-	var frogx = 0;
-	var frogy = 0;
+	var startx = 190;
+	var starty = 495;
 	var lives = 3;
 	var gameover = false;
 	var level_number = 1;
@@ -23,6 +18,9 @@ function Frogger_game(){
 	var vehicle_speed = 0;
 	var log_speed = 0;
 	var score = 0;
+	
+	//Objects
+	var player = new Player();
 	
 	//Resources
 	var canvas = document.getElementById('game');
@@ -35,6 +33,7 @@ function Frogger_game(){
 	this.start_game_loop = function()
 	{
 		var gameon = true;
+		initializeParameters();
 		
 		while(gameon)
 		{
@@ -46,11 +45,11 @@ function Frogger_game(){
 	//This is responsible for screen rendering ////
 	var drawScreen = function()
 	{	
-		//Draw water
+		//Draw Water
 		ctx.fillStyle = "#191970";
 		ctx.fillRect(0, 0, 399, 282);
 			
-		//Draw road
+		//Draw Road
 		ctx.fillStyle = "#000000";
 		ctx.fillRect(0, 282, 399, 282);
 		
@@ -78,13 +77,16 @@ function Frogger_game(){
 		ctx.font = "20px Times New Roman";
 		ctx.fillText("Level: " + level_number, 60, 542);
 		
+		//Draw objects:
+		player.draw();
+		
 	}
 	
 	//Initializes game parameters
 	var initializeParameters = function()
 	{
-		var frogx = 0;
-		var frogy = 0;
+		player.x = startx;
+		player.y = starty;
 		var lives = 3;
 		var gameover = false;
 		var level_number = 1;
@@ -93,13 +95,33 @@ function Frogger_game(){
 		var log_spawn_locations = [[0,0],[0,0],[0,0],[0,0],[0,0]];
 		var vehicle_speed = 0;
 		var log_speed = 0;
-		return frogx, frogy
 	}
 	/////////////////////////////////////////////////
 }
 
-//frog class
+//Player class
+function Player()
+{
+	this.x;
+	this.y;
+	var canvas = document.getElementById('game');
+	var ctx = canvas.getContext('2d');
+	var spritesheet = new Image();
+	spritesheet.src = "assets/frogger_sprites.png";
+	
+	this.draw = function(x, y){
+		ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
+	}
+}
 
 //log class
+function Log()
+{
+
+}
 
 //car class
+function Car()
+{
+
+}
