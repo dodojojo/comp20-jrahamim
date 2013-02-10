@@ -26,12 +26,13 @@ function Frogger_game(){
 	//Resources
 	var canvas = document.getElementById('game');
 	var ctx = canvas.getContext('2d');
+	var spritesheet = new Image();
+	spritesheet.src = "assets/frogger_sprites.png";
 	
 	//Game Methods:
 	//This function handles the game loop ///
 	this.start_game_loop = function()
 	{
-		console.log(frogx);
 		var gameon = true;
 		
 		while(gameon)
@@ -53,10 +54,14 @@ function Frogger_game(){
 		ctx.fillRect(0, 282, 399, 282);
 		
 		//Draw Title
+		ctx.drawImage(spritesheet, 0, 0, 364, 54, 0, 0, 364, 54)
 		
 		//Draw Grass
+		ctx.drawImage(spritesheet, 0, 54, 399, 54, 0, 54, 399, 54)
 		
 		//Draw Road Edges
+		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 280, 399, 36)
+		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 488, 399, 36)
 		
 		//Draw Footer Info:
 		ctx.fillStyle = "#00CA34";
