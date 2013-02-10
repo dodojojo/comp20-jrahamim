@@ -22,6 +22,7 @@ function Frogger_game(){
 	var log_spawn_locations = [[0,0],[0,0],[0,0],[0,0],[0,0]];
 	var vehicle_speed = 0;
 	var log_speed = 0;
+	var score = 0;
 	
 	//Resources
 	var canvas = document.getElementById('game');
@@ -63,10 +64,20 @@ function Frogger_game(){
 		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 280, 399, 36)
 		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 488, 399, 36)
 		
+		//Draw Lives
+		for (i = 1; i < lives; i++)
+		{
+			ctx.drawImage(spritesheet, 12, 330, 22, 26, 20*(i-1), 520, 22, 26)
+		}
+		
 		//Draw Footer Info:
 		ctx.fillStyle = "#00CA34";
+		ctx.font = "16px Times New Roman";
+		ctx.fillText("Score: " + score, 1, 560);
+		ctx.fillText("Highscore: 0", 100, 560);
 		ctx.font = "20px Times New Roman";
-		ctx.fillText("Score", 5, 550);
+		ctx.fillText("Level: " + level_number, 60, 542);
+		
 	}
 	
 	//Initializes game parameters
