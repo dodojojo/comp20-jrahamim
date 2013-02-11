@@ -1,3 +1,4 @@
+//Double refresh bug
 
 function start_game()
 {
@@ -9,6 +10,12 @@ function Frogger_game(){
 	//Default values for a new game, to be used when starting a new game
 	var startx = 190;
 	var starty = 495;
+	var logstartx = 200;
+	var logstarty = 200;
+	var car1startx = 150;
+	var car1starty = 350;
+	var car2startx = 350;
+	var car2starty = 450;
 	var lives = 3;
 	var gameover = false;
 	var level_number = 1;
@@ -21,6 +28,10 @@ function Frogger_game(){
 	
 	//Objects
 	var player = new Player();
+	var log = new Log();
+	var car1 = new Car();
+	var car2 = new Car();
+	var object_list = new Array(log, car1, car2);
 	
 	//Resources
 	var canvas = document.getElementById('game');
@@ -79,14 +90,24 @@ function Frogger_game(){
 		
 		//Draw objects:
 		player.draw();
+		for (i = 0; i < object_list.length; i++)
+		{
+			object_list[i].draw();
+		}
 		
 	}
 	
-	//Initializes game parameters
+	//Initializes new game parameters
 	var initializeParameters = function()
 	{
 		player.x = startx;
 		player.y = starty;
+		log.x = logstartx;
+		log.y = logstarty;
+		car1.x = car1startx;
+		car1.y = car1starty;
+		car2.x = car2startx;
+		car2.y = car2starty;
 		var lives = 3;
 		var gameover = false;
 		var level_number = 1;
@@ -114,14 +135,32 @@ function Player()
 	}
 }
 
-//log class
+//Log class
 function Log()
 {
-
+	this.x;
+	this.y;
+	var canvas = document.getElementById('game');
+	var ctx = canvas.getContext('2d');
+	var spritesheet = new Image();
+	spritesheet.src = "assets/frogger_sprites.png";
+	
+	this.draw = function(x, y){
+		ctx.drawImage(spritesheet, 12, 165, 187, 24, this.x, this.y, 187, 24);
+	}
 }
 
-//car class
+//Car class
 function Car()
 {
-
+	this.x;
+	this.y;
+	var canvas = document.getElementById('game');
+	var ctx = canvas.getContext('2d');
+	var spritesheet = new Image();
+	spritesheet.src = "assets/frogger_sprites.png";
+	
+	this.draw = function(x, y){
+		ctx.drawImage(spritesheet, 12, 261, 22, 26, this.x, this.y, 22, 26);
+	}
 }
