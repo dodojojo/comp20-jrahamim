@@ -14,3 +14,7 @@ canvas {
 body {
     background-color: #128138;
 }
+
+#preload{
+	display:none;
+}

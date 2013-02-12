@@ -1,4 +1,7 @@
-//Double refresh bug
+//Double refresh bug, preload in header tag with display:none FIXED
+//Comment better, talk about game frame
+//Add Readme
+//Tidy new game initializer
 
 function start_game()
 {
@@ -20,11 +23,10 @@ function Frogger_game(){
 	var gameover = false;
 	var level_number = 1;
 	var time = 0;
-	var vehicle_spawn_locations = [[0,0],[0,0],[0,0],[0,0],[0,0]];
-	var log_spawn_locations = [[0,0],[0,0],[0,0],[0,0],[0,0]];
 	var vehicle_speed = 0;
 	var log_speed = 0;
 	var score = 0;
+	var highscore = 0;
 	
 	//Objects
 	var player = new Player();
@@ -65,19 +67,19 @@ function Frogger_game(){
 		ctx.fillRect(0, 282, 399, 282);
 		
 		//Draw Title
-		ctx.drawImage(spritesheet, 0, 0, 364, 54, 0, 0, 364, 54)
+		ctx.drawImage(spritesheet, 0, 0, 364, 54, 0, 0, 364, 54);
 		
 		//Draw Grass
-		ctx.drawImage(spritesheet, 0, 54, 399, 54, 0, 54, 399, 54)
+		ctx.drawImage(spritesheet, 0, 54, 399, 54, 0, 54, 399, 54);
 		
 		//Draw Road Edges
-		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 280, 399, 36)
-		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 488, 399, 36)
+		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 280, 399, 36);
+		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 488, 399, 36);
 		
 		//Draw Lives
 		for (i = 1; i < lives; i++)
 		{
-			ctx.drawImage(spritesheet, 12, 330, 22, 26, 20*(i-1), 520, 22, 26)
+			ctx.drawImage(spritesheet, 12, 330, 22, 26, 20*(i-1), 520, 22, 26);
 		}
 		
 		//Draw Footer Info:
@@ -88,7 +90,7 @@ function Frogger_game(){
 		ctx.font = "20px Times New Roman";
 		ctx.fillText("Level: " + level_number, 60, 542);
 		
-		//Draw objects:
+		//Draw Objects:
 		player.draw();
 		for (i = 0; i < object_list.length; i++)
 		{
@@ -108,14 +110,12 @@ function Frogger_game(){
 		car1.y = car1starty;
 		car2.x = car2startx;
 		car2.y = car2starty;
-		var lives = 3;
-		var gameover = false;
-		var level_number = 1;
-		var time = 0;
-		var vehicle_spawn_locations = [[0,0],[0,0],[0,0],[0,0],[0,0]];
-		var log_spawn_locations = [[0,0],[0,0],[0,0],[0,0],[0,0]];
-		var vehicle_speed = 0;
-		var log_speed = 0;
+		lives = 3;
+		gameover = false;
+		level_number = 1;
+		time = 0;
+		vehicle_speed = 0;
+		log_speed = 0;
 	}
 	/////////////////////////////////////////////////
 }
