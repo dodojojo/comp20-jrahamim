@@ -1,18 +1,15 @@
-//Double refresh bug, preload in header tag with display:none FIXED
-//Comment better, talk about game frame
-//Add Readme
-//Tidy new game initializer
-
 function start_game()
 {
-	var frogger = new Frogger_game;
-	frogger.start_game_loop();
+	var frogger = new Frogger_game; //Create the game
+	frogger.start_game_loop();		//Then start it
 }
 
+//Frogger_game Class. The game itself is implemented as a class to hold private
+//variables and public/private methods.
 function Frogger_game(){
-	//Default values for a new game, to be used when starting a new game
-	var startx = 190;
-	var starty = 495;
+	//Default game values
+	var startx = 190; //Player starting x-pos
+	var starty = 495; //Player starting y-pos
 	var logstartx = 200;
 	var logstarty = 200;
 	var car1startx = 150;
@@ -33,16 +30,18 @@ function Frogger_game(){
 	var log = new Log();
 	var car1 = new Car();
 	var car2 = new Car();
-	var object_list = new Array(log, car1, car2);
+	var object_list = new Array(log, car1, car2); //stored in an array to ease rendering handling
 	
 	//Resources
 	var canvas = document.getElementById('game');
 	var ctx = canvas.getContext('2d');
-	var spritesheet = new Image();
+	var spritesheet = new Image(); //Load the sprite-sheet for use in the js file
 	spritesheet.src = "assets/frogger_sprites.png";
 	
-	//Game Methods:
-	//This function handles the game loop ///
+	/////////////////////////////Game Methods///////////////////////////////////////
+
+	//start_game_loop is a function that manages the game loop and controls the
+	//grand scheme of events every frame.
 	this.start_game_loop = function()
 	{
 		var gameon = true;
@@ -55,7 +54,8 @@ function Frogger_game(){
 		}
 	}
 	
-	//This is responsible for screen rendering ////
+	//draw screen is the reusable function that renders all graphics to the screen
+	//including all scenery and any objects.
 	var drawScreen = function()
 	{	
 		//Draw Water
@@ -99,7 +99,8 @@ function Frogger_game(){
 		
 	}
 	
-	//Initializes new game parameters
+	//initializeParameters is the reusable function to reset many game variables to
+	//particular values when starting a new game.
 	var initializeParameters = function()
 	{
 		player.x = startx;
@@ -119,6 +120,8 @@ function Frogger_game(){
 	}
 	/////////////////////////////////////////////////
 }
+
+///////////////////////////Objects///////////////////////////////////////////
 
 //Player class
 function Player()
