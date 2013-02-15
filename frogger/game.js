@@ -1,7 +1,17 @@
 function start_game()
 {
+	//Initialize global resources, i.e the canvas
+	canvas = document.getElementById('game');
+	ctx = canvas.getContext('2d');
+	spritesheet = new Image(); //Load the sprite-sheet for use in the js file
+	spritesheet.src = "assets/frogger_sprites.png";
+	
 	var frogger = new Frogger_game; //Create the game
-	frogger.start_game_loop();		//Then start it
+	
+	spritesheet.onload = function()
+	{
+		frogger.start_game_loop();	//Then start it once the image has loaded
+	}
 }
 
 //Frogger_game Class. The game itself is implemented as a class to hold private
@@ -31,12 +41,6 @@ function Frogger_game(){
 	var car1 = new Car();
 	var car2 = new Car();
 	var object_list = new Array(log, car1, car2); //stored in an array to ease rendering handling
-	
-	//Resources
-	var canvas = document.getElementById('game');
-	var ctx = canvas.getContext('2d');
-	var spritesheet = new Image(); //Load the sprite-sheet for use in the js file
-	spritesheet.src = "assets/frogger_sprites.png";
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
 
@@ -128,10 +132,6 @@ function Player()
 {
 	this.x;
 	this.y;
-	var canvas = document.getElementById('game');
-	var ctx = canvas.getContext('2d');
-	var spritesheet = new Image();
-	spritesheet.src = "assets/frogger_sprites.png";
 	
 	this.draw = function(x, y){
 		ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
@@ -143,10 +143,6 @@ function Log()
 {
 	this.x;
 	this.y;
-	var canvas = document.getElementById('game');
-	var ctx = canvas.getContext('2d');
-	var spritesheet = new Image();
-	spritesheet.src = "assets/frogger_sprites.png";
 	
 	this.draw = function(x, y){
 		ctx.drawImage(spritesheet, 12, 165, 187, 24, this.x, this.y, 187, 24);
@@ -158,10 +154,6 @@ function Car()
 {
 	this.x;
 	this.y;
-	var canvas = document.getElementById('game');
-	var ctx = canvas.getContext('2d');
-	var spritesheet = new Image();
-	spritesheet.src = "assets/frogger_sprites.png";
 	
 	this.draw = function(x, y){
 		ctx.drawImage(spritesheet, 12, 261, 22, 26, this.x, this.y, 22, 26);
