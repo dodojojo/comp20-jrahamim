@@ -1,0 +1,23 @@
+ul{
+	background-color:rgb(100,150,200);
+	padding:5px;
+	margin-left:300px;
+	margin-right:300px;
+	border-width:2px;
+	border-style:solid;
+	
+	font-family:Century Gothic;
+	font-size:20px;
+	font-weight:bold;
+	line-height:30px;
+	
+	list-style:none;
+}
+
+ul:hover{
+	background-color:rgb(150,200,250);
+}
+
+body{
+	background-color:rgb(150,250,250);
+}
