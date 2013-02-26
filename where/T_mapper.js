@@ -77,7 +77,18 @@ function load_hard_data()
 
 function draw_trainline()
 {
-
+	station_locations =[];
+	for (var i = 0; i < station_list.length; i++)
+	{
+		station_locations.push(station_list[i].position);
+	}
+	var trainline = new google.maps.Polyline({
+		path: station_locations,
+		strokeColor: "#FF0000",
+		strokeOpacity: 1.0,
+		strokeWeight: 4
+		});
+	trainline.setMap(map);
 }
 
 ////////////////////////////////////
