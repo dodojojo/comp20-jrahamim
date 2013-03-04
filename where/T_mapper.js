@@ -3,8 +3,9 @@ Make red line trace actual route		DONE
 Geolocate, centre on map
 Grab station info, place in windows
 Grab Carmen & Waldo locations
-Show closest distance bewtween you and nearest station
+Show closest distance between you and nearest station
 */
+//Makes more sense to add info at creation? Create dom object, give it to content
 
 function run(){
 	var myOptions = {
@@ -13,12 +14,37 @@ function run(){
           mapTypeId: google.maps.MapTypeId.ROADMAP
          };
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	
-	create_stations();
-	fill_in_train_times();
-	draw_trainline();
-//user_location_and_analysis();
-//Carmen_Waldo_location_analysis();
+
+	locate_user();
+
+	var request = new XMLHttpRequest();
+	request.open('GET', 'http://mbtamap-cedar.herokuapp.com/mapper/redline.json', true);
+	request.send(null);	
+	request.onreadystatechange = function() {
+    	if (request.readyState === 4){
+    		current_train_info = JSON.parse(request.responseText);
+    		create_stations();
+    		draw_trainline();
+    		//user_location_and_analysis();
+			//Carmen_Waldo_location_analysis();
+    	}
+	};
+}
+
+function locate_user(){
+	if (navigator.geolocation) {
+    	navigator.geolocation.getCurrentPosition(function(position) { 
+   		 user_pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude, false);
+   		 user_marker = new google.maps.Marker({
+   		 	position:user_pos,
+   		 	map: map,
+   		 	title:"User Location",
+   		 });
+ 	    });
+  }
+  else {
+    alert("Geolocation not supported!")
+  } 
 }
 
 //Station Class
@@ -37,7 +63,8 @@ function station(name, north_key, south_key, lat, lon)
    	this.marker.parent = this;
    	
    	this.infowindow = new google.maps.InfoWindow({
- 		   	content: this.name,
+ 		   	/*content: "<div class='stationName'>" + this.name + "</div>"
+ 		   	+ "<table id='infoTable'><tr><th>Trip Id</th><th>Direction</th><th>Time Remaining</th></tr> </table>",*/
     		});
     
     this.display_info = function(){
@@ -75,7 +102,39 @@ function create_stations()
 					 Fields_corner, Shawmut, Ashmont, North_quincy, Wollaston, 
 					 Quincy_center, Quincy_adams, Braintree];
 	
+	add_data_to_info_windows();
 	create_marker_listeners();
+}
+
+function add_data_to_info_windows(){
+	for(var i=0; i < station_list.length; i++){
+	content = "<div class='stationName'>" + station_list[i].name + "</div>" +
+	"<table id='infoTable'><tr><th>Trip Id</th><th>Direction</th><th>Time Remaining</th></tr>";
+	
+		for(var j=0; j < current_train_info.length; j++){
+		   if(current_train_info[j].InformationType != "Arrived" ){
+    			check_and_update_station_schedule(i, j);
+    	    }
+		}
+	content += "</table>";
+	station_list[i].infowindow.setContent(content);
+	}
+}
+
+function check_and_update_station_schedule(station_pos, info_pos){
+    if(station_list[station_pos].north_key == current_train_info[info_pos].PlatformKey ||
+    	station_list[station_pos].south_key == current_train_info[info_pos].PlatformKey ){
+    	
+    	if(station_list[station_pos].north_key == current_train_info[info_pos].PlatformKey){
+    		direction = "Northbound";
+    		} else{
+    		direction = "Southbound";}
+    	
+   		content += "<tr><td>" + 
+   		current_train_info[info_pos].Trip + "</td><td>" +
+   		direction + "</td><td>" +
+   		current_train_info[info_pos].TimeRemaining + "</td></tr>";
+    }
 }
 
 function create_marker_listeners()
@@ -87,10 +146,6 @@ function create_marker_listeners()
     		});
 	}
 	
-}
-
-function fill_in_train_times(){
-
 }
 
 
@@ -124,4 +179,33 @@ function draw_trainline()
 		});
 	trainline.setMap(map);
 }
+
+//////
+
+function fill_in_train_times(){
+	//Set up connection
+	var request = new XMLHttpRequest();
+	request.open('GET', 'http://mbtamap-cedar.herokuapp.com/mapper/redline.json', true);
+	//request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	request.send(null);
+	
+	request.onreadystatechange = function() {
+    	if (request.readyState === 4){
+    		current_train_info = JSON.parse(request.responseText);
+    		for(var i=0; i < current_train_info.length; i++){
+    		//check if already arrived
+    		//for each iterate through train list (use while to break for middle or end)
+    		//If n or s matches the current id then
+    		//add text in order
+    		if(current_train_info[i].InformationType != "Arrived" ){
+    			check_and_update_station_schedule(i);	
+    		  }
+    		}
+    	}
+	};
+	
+	//analyze and store data
+	//write to markers
+}
+
 

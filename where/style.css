@@ -1,3 +1,29 @@
 html { height: 100% }
 body { height: 100%; margin: 0px; padding: 0px }
 #map_canvas { height: 100% }
+
+table, th, td {
+border: 1px solid black;
+}
+
+table {
+width:100%;
+}
+
+th {
+height:30px;
+}
+
+td {
+	text-aling:right;
+}
+
+#infoTable{
+
+}
+
+.stationName{
+	font-weight:bold;
+	font-size:20px;
+	height:30px;
+}
