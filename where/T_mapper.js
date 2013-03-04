@@ -1,3 +1,11 @@
+/*Todo:
+Make red line trace actual route		DONE
+Geolocate, centre on map
+Grab station info, place in windows
+Grab Carmen & Waldo locations
+Show closest distance bewtween you and nearest station
+*/
+
 function run(){
 	var myOptions = {
           center: new google.maps.LatLng(44.0603 , -69.3583),
@@ -7,8 +15,10 @@ function run(){
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	
 	create_stations();
-	create_marker_listeners();
+	fill_in_train_times();
 	draw_trainline();
+//user_location_and_analysis();
+//Carmen_Waldo_location_analysis();
 }
 
 //Station Class
@@ -64,6 +74,8 @@ function create_stations()
 					 Downtown_crossing, South_station, Broadway, Andrew, JFK, Savin_hill,
 					 Fields_corner, Shawmut, Ashmont, North_quincy, Wollaston, 
 					 Quincy_center, Quincy_adams, Braintree];
+	
+	create_marker_listeners();
 }
 
 function create_marker_listeners()
@@ -77,11 +89,16 @@ function create_marker_listeners()
 	
 }
 
+function fill_in_train_times(){
+
+}
+
 
 function draw_trainline()
 {
+	//First line
 	station_locations =[];
-	for (var i = 0; i < station_list.length; i++)
+	for (var i = 0; i < 16; i++)
 	{
 		station_locations.push(station_list[i].position);
 	}
@@ -92,30 +109,19 @@ function draw_trainline()
 		strokeWeight: 4
 		});
 	trainline.setMap(map);
-}
-
-////////////////////////////////////
-function create_markers()
-{
-	marker_list = [];
-	for(var i =0;i < 3; i++)
+	
+	//Branch
+	station_locations =[station_list[12].position];//JFK
+	for (var i = 17; i < station_list.length; i++)
 	{
-		var marker = new google.maps.Marker({
-	      position: station_list[i].position,
-   		  map: map,
-   		  title:station_list[i].name,
-   		   });
-    
-   		 var infowindow = new google.maps.InfoWindow({
- 		   	content: station_list[i].name,
-    		});
-    
-  		 google.maps.event.addListener(marker, 'click', function(){
-   		 	infowindow.open(map, marker);
-   		 	console.log(marker.title);
-    		});
-    		
-    	 marker_list.push(marker);
-    }
+		station_locations.push(station_list[i].position);
+	}
+	var trainline = new google.maps.Polyline({
+		path: station_locations,
+		strokeColor: "#FF0000",
+		strokeOpacity: 1.0,
+		strokeWeight: 4
+		});
+	trainline.setMap(map);
 }
 
