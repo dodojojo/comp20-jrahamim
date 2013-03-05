@@ -1,20 +1,5 @@
-/*Todo:
-Make red line trace actual route		DONE
-Geolocate, centre on map
-Grab station info, place in windows
-Grab Carmen & Waldo locations
-Show closest distance between you and nearest station
-*/
-//Makes more sense to add info at creation? Create dom object, give it to content
-//Need to convert angles in formula to radians
-
-//Load user location
-//after station list loads ad closest station
-//after Carmen Loads get distances
-
-//Distance in miles
-
 function run(){
+	//Load Map
 	var myOptions = {
           center: new google.maps.LatLng(42.330497742 , -71.095794678),
           zoom: 12,
@@ -22,6 +7,7 @@ function run(){
          };
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	
+	//Load stations
 	var request = new XMLHttpRequest();
 	request.open('GET', 'http://mbtamap-cedar.herokuapp.com/mapper/redline.json', true);
 	request.send(null);	
@@ -30,12 +16,10 @@ function run(){
     		current_train_info = JSON.parse(request.responseText);
     		create_stations();
     		draw_trainline();
-    		//find_closest_station();
-    		//user_location_and_analysis();
-			//Carmen_Waldo_location_analysis();
     	}
 	};
 	
+	//Load Carmen Waldo locations
 	var CWrequest = new XMLHttpRequest();
 	CWrequest.open('GET', 'http://messagehub.herokuapp.com/a3.json', true);
 	CWrequest.send(null);	
@@ -48,6 +32,7 @@ function run(){
     	}
 	};
 	
+	//Geolocation
 	locate_user();
 }
 
@@ -101,7 +86,7 @@ function locate_user(){
    		 	user_marker.infowindow.open(map, user_marker);
     		}); 
     	find_closest_station();
-    	get_carmen_waldo_distance();
+    	if(CW_locations.length > 0){get_carmen_waldo_distance();}
  	    });  
   }
   else {
@@ -287,34 +272,6 @@ function draw_trainline()
 		strokeWeight: 4
 		});
 	trainline.setMap(map);
-}
-
-//////
-
-function fill_in_train_times(){
-	//Set up connection
-	var request = new XMLHttpRequest();
-	request.open('GET', 'http://mbtamap-cedar.herokuapp.com/mapper/redline.json', true);
-	//request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-	request.send(null);
-	
-	request.onreadystatechange = function() {
-    	if (request.readyState === 4){
-    		current_train_info = JSON.parse(request.responseText);
-    		for(var i=0; i < current_train_info.length; i++){
-    		//check if already arrived
-    		//for each iterate through train list (use while to break for middle or end)
-    		//If n or s matches the current id then
-    		//add text in order
-    		if(current_train_info[i].InformationType != "Arrived" ){
-    			check_and_update_station_schedule(i);	
-    		  }
-    		}
-    	}
-	};
-	
-	//analyze and store data
-	//write to markers
 }
 
 
