@@ -1,0 +1,16 @@
+Assignment 3:
+=============
+
+All parts have been implemented that is:
+1) All red lines stations have been mapped using google maps and a custom icon
+2) When clicked, station icons display information about arrival times and directions	
+   of trains to the station.
+3) A Polyline is rendered showing the red line route
+4) The user location is found and marked on the map. The closest station is located and 
+	its locations and distance away from the user in miles is shown on the map
+5) Carmen and Waldo (if around) are shown at their positions on the map. Clicking on their
+   Markers reveals the distance away from the user in miles.
+   
+This assignment took me roughly 7hrs.
+
+I didn't work with anyone on this project.

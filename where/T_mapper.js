@@ -6,17 +6,22 @@ Grab Carmen & Waldo locations
 Show closest distance between you and nearest station
 */
 //Makes more sense to add info at creation? Create dom object, give it to content
+//Need to convert angles in formula to radians
+
+//Load user location
+//after station list loads ad closest station
+//after Carmen Loads get distances
+
+//Distance in miles
 
 function run(){
 	var myOptions = {
-          center: new google.maps.LatLng(44.0603 , -69.3583),
-          zoom: 8,
+          center: new google.maps.LatLng(42.330497742 , -71.095794678),
+          zoom: 12,
           mapTypeId: google.maps.MapTypeId.ROADMAP
          };
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-	locate_user();
-
+	
 	var request = new XMLHttpRequest();
 	request.open('GET', 'http://mbtamap-cedar.herokuapp.com/mapper/redline.json', true);
 	request.send(null);	
@@ -25,26 +30,129 @@ function run(){
     		current_train_info = JSON.parse(request.responseText);
     		create_stations();
     		draw_trainline();
+    		//find_closest_station();
     		//user_location_and_analysis();
 			//Carmen_Waldo_location_analysis();
     	}
 	};
+	
+	var CWrequest = new XMLHttpRequest();
+	CWrequest.open('GET', 'http://messagehub.herokuapp.com/a3.json', true);
+	CWrequest.send(null);	
+	CWrequest.onreadystatechange = function() {
+    	if (CWrequest.readyState === 4){
+    		CW_locations = JSON.parse(CWrequest.responseText);
+    		if(CW_locations.length > 0){
+    			Carmen_Waldo_location_analysis();
+    		}
+    	}
+	};
+	
+	locate_user();
+}
+
+function Carmen_Waldo_location_analysis(){
+	CW_marker_list = [];
+	for(var i=0; i < CW_locations.length; i++)
+	{
+	 Pos = new google.maps.LatLng(CW_locations[i].loc.latitude, CW_locations[i].loc.longitude);
+	 var marker = new google.maps.Marker({
+   		 	position:Pos,
+   		 	map: map,
+   		 	title: CW_locations[i].name,
+   		 });
+   	  marker.infowindow = new google.maps.InfoWindow({
+   	  	content:"<div class='stationName'>" + CW_locations[i].name + "</div>",
+   	  });
+   	  if(CW_locations[i].name == "Waldo"){
+   	  		marker.setIcon("assets/waldo.png");
+   	  } else if(CW_locations[i].name == "Carmen Sandiego"){
+   	  		marker.setIcon("assets/carmen.png");
+   	  }
+   	  
+   	  CW_marker_list.push(marker);
+	}
+	for(var j=0; j < CW_marker_list.length; j++)
+	{
+	google.maps.event.addListener(CW_marker_list[j], 'click', function(){
+   		 	this.infowindow.open(map, this);
+    		}); 
+	}
 }
 
 function locate_user(){
 	if (navigator.geolocation) {
     	navigator.geolocation.getCurrentPosition(function(position) { 
    		 user_pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude, false);
+   		 map.panTo(user_pos);
+   		 
    		 user_marker = new google.maps.Marker({
    		 	position:user_pos,
    		 	map: map,
    		 	title:"User Location",
    		 });
- 	    });
+   		 user_marker.infowindow = new google.maps.InfoWindow({
+   		 	content: "<div class='stationName'> User Location</div>"
+   		 			+ "<div> Latitude: " + position.coords.latitude + " </div>"
+   		 			+ "<div> Longitude: " + position.coords.longitude + " </div>",
+   		 });
+   		 user_marker.infowindow.open(map, user_marker);
+   		 google.maps.event.addListener(user_marker, 'click', function(){
+   		 	user_marker.infowindow.open(map, user_marker);
+    		}); 
+    	find_closest_station();
+    	get_carmen_waldo_distance();
+ 	    });  
   }
   else {
     alert("Geolocation not supported!")
   } 
+}
+
+function find_closest_station(){
+		 closest_station = station_list[0];
+ 	     closest_distance = get_haversine_distance(user_pos.lat(), user_pos.lng(),
+ 	    			station_list[0].position.lat(), station_list[0].position.lng()); 
+ 	     for(var i=1; i < station_list.length; i++)
+ 	     {
+ 	     	d = get_haversine_distance(user_pos.lat(),user_pos.lng(), 
+ 	    		station_list[i].position.lat(),station_list[i].position.lng());
+ 	    	if(d < closest_distance){
+ 	    		closest_distance = d;
+ 	    		closest_station = station_list[i];
+ 	    	}
+ 	     }
+ 	     
+ 	     closest_station.closest_infowindow = new google.maps.InfoWindow({
+ 		   	content: "<div > Your closest station is: " + closest_station.name + "</div>"
+ 		   	+ "<div> Distance: " + closest_distance + " miles</div>",
+    		});
+    	closest_station.closest_infowindow .open(map, closest_station.marker);
+}
+
+function get_carmen_waldo_distance(){
+	for(var i=0; i < CW_marker_list.length; i++)
+	{
+	 distance = get_haversine_distance(user_pos.lat(),user_pos.lng(),
+	 				CW_marker_list[i].position.lat(), CW_marker_list[i].position.lng());
+	 CW_marker_list[i].infowindow.content += "<div> Distance: " + distance + " miles</div>";
+	}
+}
+
+function toRadians(deg){
+	return ((deg/360)*2*Math.PI);
+}
+
+function get_haversine_distance(lat1, lon1, lat2, lon2){
+	var R = 3959; // miles
+	var dLat = toRadians((lat2-lat1));
+	var dLon = toRadians((lon2-lon1));
+
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    		Math.sin(dLon/2) * Math.sin(dLon/2)
+    		 * Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)); 
+	var c =  Math.asin(Math.sqrt(a)); 
+	return 2 * R * c;
 }
 
 //Station Class
@@ -59,6 +167,7 @@ function station(name, north_key, south_key, lat, lon)
 	      position: this.position,
    		  map: map,
    		  title:this.name,
+   		  icon:"assets/station_icon.png",
    		   });
    	this.marker.parent = this;
    	
