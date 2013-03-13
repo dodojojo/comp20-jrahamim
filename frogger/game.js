@@ -20,12 +20,6 @@ function Frogger_game(){
 	//Default game values
 	var startx = 190; //Player starting x-pos
 	var starty = 495; //Player starting y-pos
-	var logstartx = 200;
-	var logstarty = 200;
-	var car1startx = 150;
-	var car1starty = 350;
-	var car2startx = 350;
-	var car2starty = 450;
 	var lives = 3;
 	var gameover = false;
 	var level_number = 1;
@@ -37,10 +31,7 @@ function Frogger_game(){
 	
 	//Objects
 	var player = new Player();
-	var log = new Log();
-	var car1 = new Car();
-	var car2 = new Car();
-	var object_list = new Array(log, car1, car2); //stored in an array to ease rendering handling
+	var object_list = new Array(); //stored in an array to ease rendering handling
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
 
@@ -64,11 +55,11 @@ function Frogger_game(){
 	{	
 		//Draw Water
 		ctx.fillStyle = "#191970";
-		ctx.fillRect(0, 0, 399, 282);
+		ctx.fillRect(0, 0, 399, 286);
 			
 		//Draw Road
 		ctx.fillStyle = "#000000";
-		ctx.fillRect(0, 282, 399, 282);
+		ctx.fillRect(0, 286, 399, 282);
 		
 		//Draw Title
 		ctx.drawImage(spritesheet, 0, 0, 364, 54, 0, 0, 364, 54);
@@ -77,7 +68,7 @@ function Frogger_game(){
 		ctx.drawImage(spritesheet, 0, 54, 399, 54, 0, 54, 399, 54);
 		
 		//Draw Road Edges
-		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 280, 399, 36);
+		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 284, 399, 36);
 		ctx.drawImage(spritesheet, 0, 117, 399, 36, 0, 488, 399, 36);
 		
 		//Draw Lives
@@ -109,12 +100,6 @@ function Frogger_game(){
 	{
 		player.x = startx;
 		player.y = starty;
-		log.x = logstartx;
-		log.y = logstarty;
-		car1.x = car1startx;
-		car1.y = car1starty;
-		car2.x = car2startx;
-		car2.y = car2starty;
 		lives = 3;
 		gameover = false;
 		level_number = 1;
