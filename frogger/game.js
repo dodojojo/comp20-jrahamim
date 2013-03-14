@@ -36,6 +36,11 @@ function Frogger_game(){
 	//Objects
 	var player = new Player();
 	var object_list = new Array(); //stored in an array to ease rendering handling
+	object_list[0] = new Car(0);
+	object_list[1] = new Car(1);
+	object_list[2] = new Car(2);
+	object_list[3] = new Car(3);
+	object_list[4] = new Car(4);
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
 
@@ -153,6 +158,19 @@ function Frogger_game(){
 	{
 		player.x = startx;
 		player.y = starty;
+		
+		//Reposition cars
+		object_list[0].x = 150;
+		object_list[0].y = 461;
+		object_list[1].x = 150;
+		object_list[1].y = 427;
+		object_list[2].x = 150;
+		object_list[2].y = 393;
+		object_list[3].x = 150;
+		object_list[3].y = 359;
+		object_list[4].x = 150;
+		object_list[4].y = 325;
+		
 		lives = 3;
 		gameover = false;
 		level_number = 1;
@@ -227,13 +245,50 @@ function Frogger_game(){
 	}
 
 //Car class
-	function Car()
+	function Car(lane)
 	{
 		this.x;
 		this.y;
+		this.speed = 1;
+		
+		var lane_number = lane // 0 to 4, 0 being the furthest down
+		var spritesheet_x = 12;
+		var spritesheet_y = 261;
+		var box_width = 22;
+		var box_height = 26;
+		
+		//pick correct sprite for the lane
+		if(lane_number == 0){
+			spritesheet_x = 76;
+			spritesheet_y = 261;
+			box_width = 28;
+			box_height = 27;
+		} else if(lane_number == 1){
+			spritesheet_x = 12;
+			spritesheet_y = 298;
+		} else if(lane_number == 2){
+			spritesheet_x = 12;
+			spritesheet_y = 261;
+		} else if(lane_number == 3){
+			spritesheet_x = 46;
+			spritesheet_y = 261;
+			box_width = 28;
+			box_height = 27;
+		} else if(lane_number == 4){
+			spritesheet_x = 105;
+			spritesheet_y = 298;
+			box_width = 48;
+			box_height = 22;
+		}
+		
+		this.onLoop = function()
+		{
+		
+		}
 		
 		this.draw = function(x, y){
-			ctx.drawImage(spritesheet, 12, 261, 22, 26, this.x, this.y, 22, 26);
+			ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, box_width, box_height,
+								 					this.x, this.y, box_width, box_height);
 		}
 	}
 }
