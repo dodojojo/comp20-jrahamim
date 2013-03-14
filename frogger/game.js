@@ -44,6 +44,7 @@ function Frogger_game(){
 	this.start_game_loop = function()
 	{
 		var gameon = true;
+		add_event_listeners();
 		initializeParameters();
 		
 		if(gameon)
@@ -77,7 +78,28 @@ function Frogger_game(){
 	//Updates objects e.g. change position, react to event etc
 	var onLoop = function()
 	{
+		//Objects
+		player.onLoop();
+	}
 	
+	//Creates event listeners that will monitor for user keyboard input
+	var add_event_listeners = function()
+	{
+		//Keydowns
+		document.addEventListener('keydown', function(event) {
+   		 if(event.keyCode == 37) {
+        	player.move_horiz = -1;
+  		 }
+  		  else if(event.keyCode == 39) {
+     	   player.move_horiz = 1;
+  		 }
+  		 else if(event.keyCode == 38) {
+     	   player.move_vert = 1;
+  		 }
+  		 else if(event.keyCode == 40) {
+     	   player.move_vert = -1;
+  		 }
+		});
 	}
 	
 	//draw screen is the reusable function that renders all graphics to the screen
@@ -148,6 +170,37 @@ function Frogger_game(){
 	{
 		this.x;
 		this.y;
+		this.move_vert = 0; //0 be still, 1 move up, -1 move down
+		this.move_horiz = 0; //0 be still, 1 move right, -1 move left
+		
+		var step_size = 34;
+		var facing_direction = 0; //0 up, 1 down, 2 left, 3 right
+		
+		this.onLoop = function(){
+			//Move the player
+			if(this.move_vert != 0)
+			{
+				if(this.move_vert==1){
+					this.y -= step_size;
+					facing_direction = 0;
+				} else if(this.move_vert== -1){
+					this.y += step_size;
+					facing_direction = 1;
+				}
+				this.move_vert = 0;
+			}
+			else if(this.move_horiz != 0)
+			{
+				if(this.move_horiz==1){
+					this.x += step_size;
+					facing_direction = 3;
+				} else if(this.move_horiz== -1){
+					this.x -= step_size;
+					facing_direction = 2;
+				}
+				this.move_horiz = 0;
+			}
+		}
 		
 		this.draw = function(x, y){
 			ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
