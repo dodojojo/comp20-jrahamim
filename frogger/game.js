@@ -42,6 +42,11 @@ function Frogger_game(){
 	object_list[2] = new Car(2);
 	object_list[3] = new Car(3);
 	object_list[4] = new Car(4);
+	object_list[5] = new Log(0);
+	object_list[6] = new Log(1);
+	object_list[7] = new Log(2);
+	object_list[8] = new Log(3);
+	object_list[9] = new Log(4);
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
 
@@ -175,6 +180,18 @@ function Frogger_game(){
 		object_list[4].x = 150;
 		object_list[4].y = 325;
 		
+		//Reposition Logs
+		object_list[5].x = 150;
+		object_list[5].y = 257;
+		object_list[6].x = 150;
+		object_list[6].y = 223;
+		object_list[7].x = 150;
+		object_list[7].y = 189;
+		object_list[8].x = 150;
+		object_list[8].y = 155;
+		object_list[9].x = 150;
+		object_list[9].y = 121;
+		
 		lives = 3;
 		gameover = false;
 		level_number = 1;
@@ -238,13 +255,55 @@ function Frogger_game(){
 	}
 
 //Log class
-	function Log()
+	function Log(row)
 	{
 		this.x;
 		this.y;
+		this.speed = 1;
+		
+		var row_number = row // 0 to 4, 0 being the furthest down
+		var spritesheet_x = 8;
+		var spritesheet_y = 165;
+		var box_width = 182;
+		var box_height = 24;
+		
+		if(row_number == 0){
+			spritesheet_y = 196;
+			box_width = 122;
+		} else if(row_number == 1){
+			spritesheet_y = 228;
+			box_width = 89;
+		} else if(row_number == 2){
+			spritesheet_y = 196;
+			box_width = 122;
+		} else if(row_number == 3){
+			spritesheet_y = 165;
+			box_width = 182;
+		} else if(row_number == 4){
+			spritesheet_y = 228;
+			box_width = 89;
+		}
+		
+		this.onLoop = function()
+		{
+			//Check if left or right moving
+			//Then 1) Move
+			//     2) Check we havent left the screen, if so wrap to the other side
+			if(row_number % 2 == 0)
+			{
+				this.x -= (this.speed / (fps/30)); //normalize to account for fps
+				if(this.x < -125){this.x = 400}
+			}
+			else
+			{
+				this.x += (this.speed / (fps/30)); 
+				if(this.x > 400){this.x = -183}
+			}		
+		}
 		
 		this.draw = function(x, y){
-			ctx.drawImage(spritesheet, 12, 165, 187, 24, this.x, this.y, 187, 24);
+			ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, box_width, box_height,
+								 					this.x, this.y, box_width, box_height);
 		}
 	}
 
