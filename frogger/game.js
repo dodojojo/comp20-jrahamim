@@ -203,7 +203,15 @@ function Frogger_game(){
 		}
 		
 		this.draw = function(x, y){
-			ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
+			if(facing_direction == 0){
+				ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
+			} else if(facing_direction ==1){
+				ctx.drawImage(spritesheet, 80, 366, 22, 26, this.x, this.y, 22, 26);
+			} else if(facing_direction ==2){
+				ctx.drawImage(spritesheet, 80, 332, 22, 26, this.x, this.y, 22, 26);
+			} else if(facing_direction ==3){
+				ctx.drawImage(spritesheet, 12, 332, 22, 26, this.x, this.y, 22, 26);
+			}
 		}
 	}
 
