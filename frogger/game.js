@@ -32,6 +32,7 @@ function Frogger_game(){
 	//FPS variables
 	var lastLoop = new Date;
 	var fps = 30;
+	var target_fps = 30;
 	
 	//Objects
 	var player = new Player();
@@ -54,7 +55,7 @@ function Frogger_game(){
 		
 		if(gameon)
 		{	
-			setInterval(game_loop, 33);
+			setInterval(game_loop, 1000/target_fps);
 		}
 	}
 	
@@ -83,7 +84,10 @@ function Frogger_game(){
 	//Updates objects e.g. change position, react to event etc
 	var onLoop = function()
 	{
-		//Objects
+		for (i = 0; i < object_list.length; i++)
+		{
+			object_list[i].onLoop();
+		}
 		player.onLoop();
 	}
 	
@@ -283,7 +287,19 @@ function Frogger_game(){
 		
 		this.onLoop = function()
 		{
-		
+			//Check if left or right moving
+			//Then 1) Move
+			//     2) Check we havent left the screen, if so wrap to the other side
+			if(lane_number % 2 == 0)
+			{
+				this.x -= (this.speed / (fps/30)); //normalize to account for fps
+				if(this.x < -50){this.x = 399}
+			}
+			else
+			{
+				this.x += (this.speed / (fps/30)); 
+				if(this.x > 400){this.x = -50}
+			}
 		}
 		
 		this.draw = function(x, y){
