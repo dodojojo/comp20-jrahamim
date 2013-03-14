@@ -29,6 +29,10 @@ function Frogger_game(){
 	var score = 0;
 	var highscore = 0;
 	
+	//FPS variables
+	var lastLoop = new Date;
+	var fps = 30;
+	
 	//Objects
 	var player = new Player();
 	var object_list = new Array(); //stored in an array to ease rendering handling
@@ -42,11 +46,38 @@ function Frogger_game(){
 		var gameon = true;
 		initializeParameters();
 		
-		while(gameon)
-		{
-			drawScreen();
-			gameon = false //for now
+		if(gameon)
+		{	
+			setInterval(game_loop, 33);
 		}
+	}
+	
+	//The function game loop
+	var game_loop = function()
+	{
+		calculate_fps();
+		onEvent();
+		onLoop();
+		drawScreen();
+	}
+	
+	var calculate_fps = function()
+	{
+		var thisLoop = new Date;
+	    fps = 1000 / (thisLoop - lastLoop);
+   		lastLoop = thisLoop;
+	}
+	
+	//Handles inputs, collisions etc
+	var onEvent = function()
+	{
+	
+	}
+	
+	//Updates objects e.g. change position, react to event etc
+	var onLoop = function()
+	{
+	
 	}
 	
 	//draw screen is the reusable function that renders all graphics to the screen
@@ -108,39 +139,40 @@ function Frogger_game(){
 		log_speed = 0;
 	}
 	/////////////////////////////////////////////////
-}
 
-///////////////////////////Objects///////////////////////////////////////////
+
+///////////////////////////Game Objects///////////////////////////////////////////
 
 //Player class
-function Player()
-{
-	this.x;
-	this.y;
-	
-	this.draw = function(x, y){
-		ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
+	function Player()
+	{
+		this.x;
+		this.y;
+		
+		this.draw = function(x, y){
+			ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
+		}
 	}
-}
 
 //Log class
-function Log()
-{
-	this.x;
-	this.y;
-	
-	this.draw = function(x, y){
-		ctx.drawImage(spritesheet, 12, 165, 187, 24, this.x, this.y, 187, 24);
+	function Log()
+	{
+		this.x;
+		this.y;
+		
+		this.draw = function(x, y){
+			ctx.drawImage(spritesheet, 12, 165, 187, 24, this.x, this.y, 187, 24);
+		}
 	}
-}
 
 //Car class
-function Car()
-{
-	this.x;
-	this.y;
-	
-	this.draw = function(x, y){
-		ctx.drawImage(spritesheet, 12, 261, 22, 26, this.x, this.y, 22, 26);
+	function Car()
+	{
+		this.x;
+		this.y;
+		
+		this.draw = function(x, y){
+			ctx.drawImage(spritesheet, 12, 261, 22, 26, this.x, this.y, 22, 26);
+		}
 	}
 }
