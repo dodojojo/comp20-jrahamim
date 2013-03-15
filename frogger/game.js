@@ -27,6 +27,7 @@ function Frogger_game(){
 	var log_speed = 0;
 	var score = 0;
 	var highscore = 0;
+	var min_player_y = 495; //Used for progression scoring
 	
 	//FPS variables
 	var lastLoop = new Date;
@@ -120,6 +121,12 @@ function Frogger_game(){
 			object_list[i].onLoop();
 		}
 		player.onLoop();
+		
+		if(player.y < min_player_y){
+			min_player_y = player.y;
+			score += 10; 
+		}
+		
 		check_for_level_win();
 	}
 	
@@ -193,7 +200,7 @@ function Frogger_game(){
 	var initialize_new_round = function()
 	{
 		player.reset();
-		
+		min_player_y = 495;
 		for (i = 0; i < object_list.length; i++)
 		{
 			object_list[i].reset();
@@ -241,6 +248,7 @@ function Frogger_game(){
 		//If there's a win, end round
 		if(victory)
 		{
+			score += 1000;
 			initialize_new_round();
 		}
 	}
@@ -557,6 +565,7 @@ function Frogger_game(){
 		this.become_occupied = function()
 		{
 			this.occupied = true;
+			score += 50;
 			console.log("Yay");
 		}
 		
