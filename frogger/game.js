@@ -45,34 +45,34 @@ function Frogger_game(){
 	}
 	
 	for(var i=0; i<3; i++){
-		object_list.push(new Car(0, 50 + (133*i) , 461));
+		object_list.push(new Car(0, 35 + (125*i) , 461));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Car(1, 50 + (133*i) , 427));
+		object_list.push(new Car(1, 65 + (140*i) , 427));
 	}
 	for(var i=0; i<3; i++){
 		object_list.push(new Car(2, 50 + (133*i) , 393));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Car(3, 50 + (133*i) , 359));
+		object_list.push(new Car(3, 70 + (145*i) , 359));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Car(4, 50 + (133*i) , 325));
+		object_list.push(new Car(4, 30 + (150*i) , 325));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Log(0, 50 + (133*i) , 257));
+		object_list.push(new Log(0, 35 + (133*i) , 257));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Log(1, 50 + (133*i) , 223));
+		object_list.push(new Log(1, 60 + (200*i) , 223));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Log(2, 50 + (133*i) , 189));
+		object_list.push(new Log(2, 50 + (170*i) , 189));
+	}
+	for(var i=0; i<2; i++){
+		object_list.push(new Log(3, 70 + (266*i) , 153));
 	}
 	for(var i=0; i<3; i++){
-		object_list.push(new Log(3, 50 + (133*i) , 155));
-	}
-	for(var i=0; i<3; i++){
-		object_list.push(new Log(4, 50 + (133*i) , 121));
+		object_list.push(new Log(4, 60 + (160*i) , 121));
 	}
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
@@ -184,7 +184,7 @@ function Frogger_game(){
 		ctx.fillText("Score: " + score, 1, 560);
 		ctx.fillText("Highscore: 0", 100, 560);
 		ctx.font = "20px Times New Roman";
-		ctx.fillText("Level: " + level_number, 360, 542);
+		ctx.fillText("Level: " + level_number, 320, 542);
 		
 		//Draw Objects:
 		for (i = 0; i < object_list.length; i++)
@@ -249,13 +249,14 @@ function Frogger_game(){
 		if(victory)
 		{
 			score += 1000;
+			level_number++;
 			initialize_new_round();
 		}
 	}
 	
 	var gameover = function()
 	{
-		level = 1;
+		level_number = 1;
 		score = 0;
 		lives = 5;
 		initialize_new_round();
@@ -339,7 +340,7 @@ function Frogger_game(){
 						die();
 					} else if(object_list[i].type == "Log"){
 						onLog = true;
-						player.x += (2*(object_list[i].getRow()%2) - object_list[i].speed )/ (fps/30);//Move with log
+						player.x += object_list[i].speed*((2*(object_list[i].getRow()%2) - 1) )/ (fps/30);//Move with log
 					} else if(object_list[i].type == "Victory_Box"){
 						if(object_list[i].occupied){
 							die();
@@ -390,7 +391,7 @@ function Frogger_game(){
 		this.x = Defaultx;
 		this.y = Defaulty;
 		this.type = "Log";
-		this.speed = 1;
+		this.speed = 0.5 + (level_number/2);
 		
 		var row_number = row // 0 to 4, 0 being the furthest down
 		var spritesheet_x = 8;
@@ -462,7 +463,7 @@ function Frogger_game(){
 		this.x = Defaultx;
 		this.y = Defaulty;
 		this.type = "Car";
-		this.speed = 1;
+		this.speed = 0.5 + (level_number/2);
 		
 		var lane_number = lane // 0 to 4, 0 being the furthest down
 		var spritesheet_x = 12;
