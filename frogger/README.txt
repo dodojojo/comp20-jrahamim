@@ -3,6 +3,8 @@ Assignment 4:
 
 Extras:
 Added Level difficulties (cars get faster)
+Added sound into the game
+Animated dead frogger
 
 Assignment 2:
 =============

@@ -8,6 +8,10 @@ function start_game()
 	spritesheet = new Image(); //Load the sprite-sheet for use in the js file
 	spritesheet.src = "assets/frogger_sprites.png";
 	
+	if(localStorage["highscore"] == undefined){ //Check if this is the first time
+		localStorage["highscore"] = "0";
+	}
+	
 	var frogger = new Frogger_game; //Create the game
 	
 	spritesheet.onload = function()
@@ -26,7 +30,7 @@ function Frogger_game(){
 	var level_number = 1;
 	var time = 0;
 	var score = 0;
-	var highscore = 0;
+	var highscore = localStorage["highscore"];
 	var min_player_y = 495; //Used for progression scoring
 	var mixer = new Mixer();
 	
@@ -125,7 +129,7 @@ function Frogger_game(){
 		
 		if(player.y < min_player_y){
 			min_player_y = player.y;
-			score += 10; 
+			increase_score(10); 
 		}
 		
 		check_for_level_win();
@@ -183,7 +187,7 @@ function Frogger_game(){
 		ctx.fillStyle = "#00CA34";
 		ctx.font = "16px Times New Roman";
 		ctx.fillText("Score: " + score, 1, 560);
-		ctx.fillText("Highscore: 0", 100, 560);
+		ctx.fillText("Highscore: " + highscore, 100, 560);
 		ctx.font = "20px Times New Roman";
 		ctx.fillText("Level: " + level_number, 320, 542);
 		
@@ -249,7 +253,7 @@ function Frogger_game(){
 		//If there's a win, end round
 		if(victory)
 		{
-			score += 1000;
+			increase_score(1000);
 			level_number++;
 			initialize_new_round();
 		}
@@ -262,6 +266,17 @@ function Frogger_game(){
 		score = 0;
 		lives = 5;
 		initialize_new_round();
+	}
+	
+	//Deal with score event more easily
+	var increase_score = function(addition)
+	{
+		score += addition;
+		if(score > highscore)
+		{
+			highscore = score;
+			localStorage["highscore"] = score;
+		}
 	}
 	/////////////////////////////////////////////////
 
@@ -288,7 +303,7 @@ function Frogger_game(){
 		
 		this.onLoop = function(){
 			//Move the player
-			if(this.move_vert != 0)
+			if(this.move_vert != 0 && !dead)
 			{
 				if(this.move_vert==1){
 					this.y -= step_size;
@@ -300,7 +315,7 @@ function Frogger_game(){
 				mixer.play("jump");
 				this.move_vert = 0;
 			}
-			else if(this.move_horiz != 0)
+			else if(this.move_horiz != 0 && !dead)
 			{
 				if(this.move_horiz==1){
 					this.x += step_size;
@@ -385,7 +400,6 @@ function Frogger_game(){
 			mixer.play("death");
 			
 			var death_timer = setInterval( function(){
-				console.log(dead);
 				player.reset();
 				dead = false;
 				lives--;
@@ -402,6 +416,7 @@ function Frogger_game(){
 			this.x = Defaultx;
 			this.y = Defaulty;
 		}
+
 	}
 
 //Log class
@@ -587,7 +602,7 @@ function Frogger_game(){
 		this.become_occupied = function()
 		{
 			this.occupied = true;
-			score += 50;
+			increase_score(50);
 		}
 		
 		this.reset = function()
