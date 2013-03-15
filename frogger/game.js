@@ -3,6 +3,8 @@ function start_game()
 	//Initialize global resources, i.e the canvas
 	canvas = document.getElementById('game');
 	ctx = canvas.getContext('2d');
+	dead_frog_sprite = new Image();
+	dead_frog_sprite.src = "assets/dead_frog.png";
 	spritesheet = new Image(); //Load the sprite-sheet for use in the js file
 	spritesheet.src = "assets/frogger_sprites.png";
 	
@@ -282,6 +284,7 @@ function Frogger_game(){
 		var facing_direction = 0; //0 up, 1 down, 2 left, 3 right
 		var onLog = false;
 		var inWater = false;
+		var dead = false;
 		
 		this.onLoop = function(){
 			//Move the player
@@ -313,9 +316,12 @@ function Frogger_game(){
 			//Check for collisions
 			onLog = false;
 			inWater = false;
-			check_collisions();
-			if(inWater && !onLog){
-				die();
+			if(!dead)
+			{
+				check_collisions();
+				if(inWater && !onLog){
+					die();
+				}
 			}
 		}
 		
@@ -360,7 +366,9 @@ function Frogger_game(){
 		}
 		
 		this.draw = function(x, y){
-			if(facing_direction == 0){
+			if(dead){
+				ctx.drawImage(dead_frog_sprite, 0, 0, 30, 30, this.x, this.y, 30, 30);
+			} else if(facing_direction == 0){
 				ctx.drawImage(spritesheet, 12, 366, width, height, this.x, this.y, width, height);
 			} else if(facing_direction ==1){
 				ctx.drawImage(spritesheet, 80, 366, width, height, this.x, this.y, width, height);
@@ -373,12 +381,20 @@ function Frogger_game(){
 		
 		var die = function()
 		{
+			dead = true;
 			mixer.play("death");
-			player.reset();
-			lives--;
-			if(lives <= 0){
-				gameover();
-			}
+			
+			var death_timer = setInterval( function(){
+				console.log(dead);
+				player.reset();
+				dead = false;
+				lives--;
+				if(lives <= 0){
+					gameover();
+				}
+				clearInterval(death_timer);
+			}, 1000);
+			
 		}
 		
 		this.reset = function()
