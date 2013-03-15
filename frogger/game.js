@@ -30,6 +30,7 @@ function Frogger_game(){
 	var level_number = 1;
 	var time = 0;
 	var score = 0;
+	var extra_life_tracker = 0;
 	var highscore = localStorage["highscore"];
 	var min_player_y = 495; //Used for progression scoring
 	var mixer = new Mixer();
@@ -205,7 +206,6 @@ function Frogger_game(){
 	var initialize_new_round = function()
 	{
 		player.reset();
-		min_player_y = 495;
 		for (i = 0; i < object_list.length; i++)
 		{
 			object_list[i].reset();
@@ -272,10 +272,19 @@ function Frogger_game(){
 	var increase_score = function(addition)
 	{
 		score += addition;
+		extra_life_tracker += addition;
 		if(score > highscore)
 		{
 			highscore = score;
 			localStorage["highscore"] = score;
+		}
+		if(extra_life_tracker > 100)
+		{
+			extra_life_tracker = 0;
+			if(lives < 5)
+			{
+				lives++;
+			}
 		}
 	}
 	/////////////////////////////////////////////////
@@ -415,6 +424,7 @@ function Frogger_game(){
 		{
 			this.x = Defaultx;
 			this.y = Defaulty;
+			min_player_y = 495;
 		}
 
 	}
