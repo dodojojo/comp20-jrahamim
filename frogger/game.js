@@ -37,20 +37,42 @@ function Frogger_game(){
 	//Objects
 	var player = new Player(190, 495);
 	var object_list = new Array(); //stored in an array to ease rendering handling
-	object_list[0] = new Car(0, 150, 461);
-	object_list[1] = new Car(1, 150, 427);
-	object_list[2] = new Car(2, 150, 393);
-	object_list[3] = new Car(3, 150, 359);
-	object_list[4] = new Car(4, 150, 325);
-	object_list[5] = new Log(0, 150, 257);
-	object_list[6] = new Log(1, 150, 223);
-	object_list[7] = new Log(2, 150, 189);
-	object_list[8] = new Log(3, 150, 155);
-	object_list[9] = new Log(4, 150, 121);
-
+	
+	//Victory boxes first so we know they're the first 5 boxes
 	for(var i = 0; i < 5; i++)
 	{
 		object_list.push(new Victory_Box(12 + (i * 85),72));
+	}
+	
+	for(var i=0; i<3; i++){
+		object_list.push(new Car(0, 50 + (133*i) , 461));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Car(1, 50 + (133*i) , 427));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Car(2, 50 + (133*i) , 393));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Car(3, 50 + (133*i) , 359));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Car(4, 50 + (133*i) , 325));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Log(0, 50 + (133*i) , 257));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Log(1, 50 + (133*i) , 223));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Log(2, 50 + (133*i) , 189));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Log(3, 50 + (133*i) , 155));
+	}
+	for(var i=0; i<3; i++){
+		object_list.push(new Log(4, 50 + (133*i) , 121));
 	}
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
@@ -61,7 +83,7 @@ function Frogger_game(){
 	{
 		var gameon = true;
 		add_event_listeners();
-		initializeParameters();
+		initialize_new_round();
 		
 		if(gameon)
 		{	
@@ -99,6 +121,7 @@ function Frogger_game(){
 			object_list[i].onLoop();
 		}
 		player.onLoop();
+		check_for_level_win();
 	}
 	
 	//Creates event listeners that will monitor for user keyboard input
@@ -168,7 +191,7 @@ function Frogger_game(){
 	
 	//initializeParameters is the reusable function to reset many game variables to
 	//particular values when starting a new game.
-	var initializeParameters = function()
+	var initialize_new_round = function()
 	{
 		player.reset();
 		
@@ -207,6 +230,24 @@ function Frogger_game(){
 			return false;
 		} else {
 			return true;
+		}
+	}
+	
+	var check_for_level_win = function()
+	{
+		//Check for win
+		var victory = true;
+		for(var i = 0; i < 5; i++)
+		{
+			if(object_list[i].occupied == false){
+				victory = false;
+			}
+		}
+		
+		//If there's a win, end round
+		if(victory)
+		{
+			initialize_new_round();
 		}
 	}
 	/////////////////////////////////////////////////
@@ -517,6 +558,7 @@ function Frogger_game(){
 		{
 			this.x = Defaultx;
 			this.y = Defaulty;
+			this.occupied = false;
 		}
 	}
 }
