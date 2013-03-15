@@ -35,22 +35,22 @@ function Frogger_game(){
 	var target_fps = 30;
 	
 	//Objects
-	var player = new Player();
+	var player = new Player(190, 495);
 	var object_list = new Array(); //stored in an array to ease rendering handling
-	object_list[0] = new Car(0);
-	object_list[1] = new Car(1);
-	object_list[2] = new Car(2);
-	object_list[3] = new Car(3);
-	object_list[4] = new Car(4);
-	object_list[5] = new Log(0);
-	object_list[6] = new Log(1);
-	object_list[7] = new Log(2);
-	object_list[8] = new Log(3);
-	object_list[9] = new Log(4);
-	
-	for(var i = 0; i < 1; i++)
+	object_list[0] = new Car(0, 150, 461);
+	object_list[1] = new Car(1, 150, 427);
+	object_list[2] = new Car(2, 150, 393);
+	object_list[3] = new Car(3, 150, 359);
+	object_list[4] = new Car(4, 150, 325);
+	object_list[5] = new Log(0, 150, 257);
+	object_list[6] = new Log(1, 150, 223);
+	object_list[7] = new Log(2, 150, 189);
+	object_list[8] = new Log(3, 150, 155);
+	object_list[9] = new Log(4, 150, 121);
+
+	for(var i = 0; i < 5; i++)
 	{
-		object_list.push(new Victory_Box(40,40));
+		object_list.push(new Victory_Box(12 + (i * 85),72));
 	}
 	
 	/////////////////////////////Game Methods///////////////////////////////////////
@@ -170,32 +170,12 @@ function Frogger_game(){
 	//particular values when starting a new game.
 	var initializeParameters = function()
 	{
-		player.x = startx;
-		player.y = starty;
+		player.reset();
 		
-		//Reposition cars
-		object_list[0].x = 150;
-		object_list[0].y = 461;
-		object_list[1].x = 150;
-		object_list[1].y = 427;
-		object_list[2].x = 150;
-		object_list[2].y = 393;
-		object_list[3].x = 150;
-		object_list[3].y = 359;
-		object_list[4].x = 150;
-		object_list[4].y = 325;
-		
-		//Reposition Logs
-		object_list[5].x = 150;
-		object_list[5].y = 257;
-		object_list[6].x = 150;
-		object_list[6].y = 223;
-		object_list[7].x = 150;
-		object_list[7].y = 189;
-		object_list[8].x = 150;
-		object_list[8].y = 155;
-		object_list[9].x = 150;
-		object_list[9].y = 121;
+		for (i = 0; i < object_list.length; i++)
+		{
+			object_list[i].reset();
+		}
 		
 		lives = 3;
 		gameover = false;
@@ -235,10 +215,12 @@ function Frogger_game(){
 ///////////////////////////Game Objects///////////////////////////////////////////
 
 //Player class
-	function Player()
+	function Player(X, Y)
 	{
-		this.x;
-		this.y;
+		var Defaultx = X;
+		var Defaulty = Y;
+		this.x = Defaultx;
+		this.y = Defaulty;
 		this.move_vert = 0; //0 be still, 1 move up, -1 move down
 		this.move_horiz = 0; //0 be still, 1 move right, -1 move left
 		
@@ -307,9 +289,16 @@ function Frogger_game(){
 					} else if(object_list[i].type == "Log"){
 						onLog = true;
 						player.x += (2*(object_list[i].getRow()%2) - object_list[i].speed )/ (fps/30);//Move with log
+					} else if(object_list[i].type == "Victory_Box"){
+						if(object_list[i].occupied){
+							die();
+						} else if(!(object_list[i].occupied)){
+							object_list[i].become_occupied();
+							onLog = true;
+							player.reset();
+						}
 					}
 					//if victory, initiate victory spot functions
-					//if out of bounds, die
 				}
 			}
 		}
@@ -330,13 +319,21 @@ function Frogger_game(){
 		{
 			console.log("Splat");
 		}
+		
+		this.reset = function()
+		{
+			this.x = Defaultx;
+			this.y = Defaulty;
+		}
 	}
 
 //Log class
-	function Log(row)
+	function Log(row, X, Y)
 	{
-		this.x;
-		this.y;
+		var Defaultx = X;
+		var Defaulty = Y;
+		this.x = Defaultx;
+		this.y = Defaulty;
 		this.type = "Log";
 		this.speed = 1;
 		
@@ -394,13 +391,21 @@ function Frogger_game(){
 			ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, box_width, box_height,
 								 					this.x, this.y, box_width, box_height);
 		}
+		
+		this.reset = function()
+		{
+			this.x = Defaultx;
+			this.y = Defaulty;
+		}
 	}
 
 //Car class
-	function Car(lane)
+	function Car(lane, X, Y)
 	{
-		this.x;
-		this.y;
+		var Defaultx = X;
+		var Defaulty = Y;
+		this.x = Defaultx;
+		this.y = Defaulty;
 		this.type = "Car";
 		this.speed = 1;
 		
@@ -462,18 +467,27 @@ function Frogger_game(){
 			ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, box_width, box_height,
 								 					this.x, this.y, box_width, box_height);
 		}
+		
+		this.reset = function()
+		{
+			this.x = Defaultx;
+			this.y = Defaulty;
+		}
 	}
 	
 	function Victory_Box(X, Y)
 	{
-		this.x = X;
-		this.y = Y;
+		var Defaultx = X;
+		var Defaulty = Y;
+		this.x = Defaultx;
+		this.y = Defaulty;
+		this.type = "Victory_Box";
 		this.occupied = false;
 		
-		var width = 34;
-		var height = 34;
-		var spritesheet_x = 12;
-		var spritesheet_y = 261;
+		var width = 30;
+		var height = 30;
+		var spritesheet_x = 80;
+		var spritesheet_y = 366;
 		
 		this.getWidth = function(){
 			return width;
@@ -486,8 +500,23 @@ function Frogger_game(){
 		}
 		
 		this.draw = function(){
-			ctx.fillStyle = "#FF00FF";
-			ctx.fillRect(this.x, this.x, width, height);
+			if(this.occupied)
+			{
+				ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, width, height,
+								 					this.x + 3, this.y + 3, width, height);
+			}
+		}
+		
+		this.become_occupied = function()
+		{
+			this.occupied = true;
+			console.log("Yay");
+		}
+		
+		this.reset = function()
+		{
+			this.x = Defaultx;
+			this.y = Defaulty;
 		}
 	}
 }
