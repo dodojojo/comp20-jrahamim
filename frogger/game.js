@@ -82,6 +82,8 @@ function Frogger_game(){
 		object_list.push(new Log(4, 60 + (160*i) , 121));
 	}
 	
+	object_list.push(new Fly());
+	
 	/////////////////////////////Game Methods///////////////////////////////////////
 
 	//start_game_loop is a function that manages the game loop and controls the
@@ -357,6 +359,16 @@ function Frogger_game(){
 				inWater = true;
 			}
 		
+			//The last one is the fly and is a special case because the victory boxes
+			//are checked first and will move the player
+			var fly = object_list[object_list.length - 1];
+ 			if(is_colliding(player.x, player.y, width, height,
+				   			fly.x, fly.y, fly.getWidth(), fly.getHeight())){
+						increase_score(200);
+						mixer.play("getitem");
+						fly.reset();
+			} 		
+		
 			for (i = 0; i < object_list.length; i++)
 			{
 				if(is_colliding(player.x, player.y, width, height,
@@ -379,7 +391,6 @@ function Frogger_game(){
 							player.reset();
 						}
 					}
-					//if victory, initiate victory spot functions
 				}
 			}
 		}
@@ -617,6 +628,58 @@ function Frogger_game(){
 			this.x = Defaultx;
 			this.y = Defaulty;
 			this.occupied = false;
+		}
+	}
+	
+	function Fly()
+	{
+
+		this.x = 15;
+		this.y = 76;
+		this.type = "Fly";
+		var width = 30;
+		var height = 30;
+		var spritesheet_x = 134;
+		var spritesheet_y = 231;
+		var fly_timer = new Timer(10);
+		
+		this.getWidth = function(){
+			return width;
+		}
+		this.getHeight = function(){
+			return height;
+		}
+		
+		this.onLoop = function(){
+			if(fly_timer.getTime() == 0)
+			{
+				this.juggle_position();
+			}
+		}
+		
+		this.draw = function(){
+			ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, width, height,
+								 					this.x, this.y, width, height);
+		}
+		
+		this.reset = function(){
+			this.juggle_position();
+			fly_timer.start_timer();
+		}
+		
+		this.juggle_position = function()
+		{
+			var pos=Math.floor(Math.random()*10)
+			if(pos > 5){
+				//do nothing, fly wont render this time
+			} else{
+				if(!object_list[pos].occupied){ //check its free
+					this.x = 15 + (pos*85);
+				} else {
+					//try again
+				}
+			}
+			fly_timer.start_timer();
 		}
 	}
 }
