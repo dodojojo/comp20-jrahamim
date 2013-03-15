@@ -34,6 +34,7 @@ function Frogger_game(){
 	var highscore = localStorage["highscore"];
 	var min_player_y = 495; //Used for progression scoring
 	var mixer = new Mixer();
+	var timer = new Timer(100);
 	
 	//FPS variables
 	var lastLoop = new Date;
@@ -101,7 +102,6 @@ function Frogger_game(){
 	var game_loop = function()
 	{
 		calculate_fps();
-		onEvent();
 		onLoop();
 		drawScreen();
 	}
@@ -113,15 +113,10 @@ function Frogger_game(){
    		lastLoop = thisLoop;
 	}
 	
-	//Handles inputs, collisions etc
-	var onEvent = function()
-	{
-	
-	}
-	
 	//Updates objects e.g. change position, react to event etc
 	var onLoop = function()
 	{
+		time = timer.getTime();
 		for (i = 0; i < object_list.length; i++)
 		{
 			object_list[i].onLoop();
@@ -189,6 +184,7 @@ function Frogger_game(){
 		ctx.font = "16px Times New Roman";
 		ctx.fillText("Score: " + score, 1, 560);
 		ctx.fillText("Highscore: " + highscore, 100, 560);
+		ctx.fillText("Time: " + time, 320, 560);
 		ctx.font = "20px Times New Roman";
 		ctx.fillText("Level: " + level_number, 320, 542);
 		
@@ -202,7 +198,7 @@ function Frogger_game(){
 	}
 	
 	//initializeParameters is the reusable function to reset many game variables to
-	//particular values when starting a new game.
+	//particular values when starting a new game after 5 frogs reach the other side.
 	var initialize_new_round = function()
 	{
 		player.reset();
@@ -211,7 +207,6 @@ function Frogger_game(){
 			object_list[i].reset();
 		}
 		
-		time = 0;
 	}
 	
 	var is_colliding = function(x1, y1, width1, height1, x2, y2, width2, height2)
@@ -278,7 +273,7 @@ function Frogger_game(){
 			highscore = score;
 			localStorage["highscore"] = score;
 		}
-		if(extra_life_tracker > 100)
+		if(extra_life_tracker > 10000)
 		{
 			extra_life_tracker = 0;
 			if(lives < 5)
@@ -425,6 +420,7 @@ function Frogger_game(){
 			this.x = Defaultx;
 			this.y = Defaulty;
 			min_player_y = 495;
+			timer.start_timer();
 		}
 
 	}
@@ -612,7 +608,8 @@ function Frogger_game(){
 		this.become_occupied = function()
 		{
 			this.occupied = true;
-			increase_score(50);
+			increase_score(50); //for the victory
+			increase_score(10 * timer.getTime()); //for the time remaining
 		}
 		
 		this.reset = function()
@@ -640,4 +637,24 @@ function Mixer()
 		sound = document.getElementById(sound_type);
 		sound.play();
 	}	
+}
+
+//Timer class
+function Timer(t)
+{
+	var start_time = t;
+	var timer; //To hold the interval function
+	var time = start_time;
+	this.start_timer = function()
+	{
+		clearInterval(timer);
+		time = start_time;
+		timer = setInterval( function(){
+			if(time > 0){time--;}
+		}, 1000);
+	}
+	
+	this.getTime = function(){
+		return time;
+	}
 }
