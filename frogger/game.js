@@ -153,11 +153,11 @@ function Frogger_game(){
 		ctx.fillText("Level: " + level_number, 60, 542);
 		
 		//Draw Objects:
-		player.draw();
 		for (i = 0; i < object_list.length; i++)
 		{
 			object_list[i].draw();
 		}
+		player.draw();
 		
 	}
 	
@@ -199,6 +199,31 @@ function Frogger_game(){
 		vehicle_speed = 0;
 		log_speed = 0;
 	}
+	
+	var is_colliding = function(x1, y1, width1, height1, x2, y2, width2, height2)
+	{
+		var left1 = x1;
+		var left2 = x2;
+		var right1 = x1 + width1;
+		var right2 = x2 + width2;
+		
+		var top1 = y1;
+		var top2 = y2;
+		var bottom1 = y1 + height1;
+		var bottom2 = y2 + height2;
+		
+		if(bottom1 < top2){
+			return false;
+		} else if(bottom2 < top1) {
+			return false;
+		} else if(right1 < left2) {
+			return false;
+		} else if(right2 < left1) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 	/////////////////////////////////////////////////
 
 
@@ -212,6 +237,8 @@ function Frogger_game(){
 		this.move_vert = 0; //0 be still, 1 move up, -1 move down
 		this.move_horiz = 0; //0 be still, 1 move right, -1 move left
 		
+		var width = 22;
+		var height = 26;
 		var step_size = 34;
 		var facing_direction = 0; //0 up, 1 down, 2 left, 3 right
 		
@@ -239,17 +266,37 @@ function Frogger_game(){
 				}
 				this.move_horiz = 0;
 			}
+			
+			//Check for collisions
+			check_collisions();
+		}
+		
+		var check_collisions = function()
+		{
+			for (i = 0; i < object_list.length; i++)
+			{
+				if(is_colliding(player.x, player.y, width, height,
+				   object_list[i].x, object_list[i].y, object_list[i].getWidth(), object_list[i].getHeight() ))
+				{
+					console.log("BOOM");
+					//If water, in water
+					//If log, move x, onlog
+					//if car, splat
+					//if victory, initiate victory spot functions
+					//if out of bounds, die
+				}
+			}
 		}
 		
 		this.draw = function(x, y){
 			if(facing_direction == 0){
-				ctx.drawImage(spritesheet, 12, 366, 22, 26, this.x, this.y, 22, 26);
+				ctx.drawImage(spritesheet, 12, 366, width, height, this.x, this.y, width, height);
 			} else if(facing_direction ==1){
-				ctx.drawImage(spritesheet, 80, 366, 22, 26, this.x, this.y, 22, 26);
+				ctx.drawImage(spritesheet, 80, 366, width, height, this.x, this.y, width, height);
 			} else if(facing_direction ==2){
-				ctx.drawImage(spritesheet, 80, 332, 22, 26, this.x, this.y, 22, 26);
+				ctx.drawImage(spritesheet, 80, 332, width, height, this.x, this.y, width, height);
 			} else if(facing_direction ==3){
-				ctx.drawImage(spritesheet, 12, 332, 22, 26, this.x, this.y, 22, 26);
+				ctx.drawImage(spritesheet, 12, 332, width, height, this.x, this.y, width, height);
 			}
 		}
 	}
@@ -282,6 +329,13 @@ function Frogger_game(){
 		} else if(row_number == 4){
 			spritesheet_y = 228;
 			box_width = 89;
+		}
+		
+		this.getWidth = function(){
+			return box_width;
+		}
+		this.getHeight = function(){
+			return box_height;
 		}
 		
 		this.onLoop = function()
@@ -342,6 +396,13 @@ function Frogger_game(){
 			spritesheet_y = 298;
 			box_width = 48;
 			box_height = 22;
+		}
+
+		this.getWidth = function(){
+			return box_width;
+		}
+		this.getHeight = function(){
+			return box_height;
 		}
 		
 		this.onLoop = function()
