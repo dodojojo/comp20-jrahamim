@@ -48,6 +48,11 @@ function Frogger_game(){
 	object_list[8] = new Log(3);
 	object_list[9] = new Log(4);
 	
+	for(var i = 0; i < 1; i++)
+	{
+		object_list.push(new Victory_Box(40,40));
+	}
+	
 	/////////////////////////////Game Methods///////////////////////////////////////
 
 	//start_game_loop is a function that manages the game loop and controls the
@@ -241,6 +246,8 @@ function Frogger_game(){
 		var height = 26;
 		var step_size = 34;
 		var facing_direction = 0; //0 up, 1 down, 2 left, 3 right
+		var onLog = false;
+		var inWater = false;
 		
 		this.onLoop = function(){
 			//Move the player
@@ -268,20 +275,39 @@ function Frogger_game(){
 			}
 			
 			//Check for collisions
+			onLog = false;
+			inWater = false;
 			check_collisions();
+			if(inWater && !onLog){
+				die();
+			}
 		}
 		
 		var check_collisions = function()
 		{
+			//Check we're in bounds
+			if(player.x < 0 || player.x > (399 - width)
+			                || player.y < 0 || player.y > (565 - height)){
+				die();
+			}
+		
+			//Check if we're in water
+			if(player.y < 286){
+				inWater = true;
+			}
+		
 			for (i = 0; i < object_list.length; i++)
 			{
 				if(is_colliding(player.x, player.y, width, height,
 				   object_list[i].x, object_list[i].y, object_list[i].getWidth(), object_list[i].getHeight() ))
 				{
-					console.log("BOOM");
-					//If water, in water
-					//If log, move x, onlog
-					//if car, splat
+					
+					if(object_list[i].type == "Car"){
+						die();
+					} else if(object_list[i].type == "Log"){
+						onLog = true;
+						player.x += (2*(object_list[i].getRow()%2) - object_list[i].speed )/ (fps/30);//Move with log
+					}
 					//if victory, initiate victory spot functions
 					//if out of bounds, die
 				}
@@ -299,6 +325,11 @@ function Frogger_game(){
 				ctx.drawImage(spritesheet, 12, 332, width, height, this.x, this.y, width, height);
 			}
 		}
+		
+		var die = function()
+		{
+			console.log("Splat");
+		}
 	}
 
 //Log class
@@ -306,6 +337,7 @@ function Frogger_game(){
 	{
 		this.x;
 		this.y;
+		this.type = "Log";
 		this.speed = 1;
 		
 		var row_number = row // 0 to 4, 0 being the furthest down
@@ -337,6 +369,9 @@ function Frogger_game(){
 		this.getHeight = function(){
 			return box_height;
 		}
+		this.getRow = function(){
+			return row_number;
+		}
 		
 		this.onLoop = function()
 		{
@@ -366,6 +401,7 @@ function Frogger_game(){
 	{
 		this.x;
 		this.y;
+		this.type = "Car";
 		this.speed = 1;
 		
 		var lane_number = lane // 0 to 4, 0 being the furthest down
@@ -425,6 +461,33 @@ function Frogger_game(){
 		this.draw = function(x, y){
 			ctx.drawImage(spritesheet, spritesheet_x, spritesheet_y, box_width, box_height,
 								 					this.x, this.y, box_width, box_height);
+		}
+	}
+	
+	function Victory_Box(X, Y)
+	{
+		this.x = X;
+		this.y = Y;
+		this.occupied = false;
+		
+		var width = 34;
+		var height = 34;
+		var spritesheet_x = 12;
+		var spritesheet_y = 261;
+		
+		this.getWidth = function(){
+			return width;
+		}
+		this.getHeight = function(){
+			return height;
+		}
+		
+		this.onLoop = function(){
+		}
+		
+		this.draw = function(){
+			ctx.fillStyle = "#FF00FF";
+			ctx.fillRect(this.x, this.x, width, height);
 		}
 	}
 }
