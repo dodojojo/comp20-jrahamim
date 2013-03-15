@@ -23,11 +23,10 @@ function Frogger_game(){
 	var lives = 5;
 	var level_number = 1;
 	var time = 0;
-	var vehicle_speed = 0;
-	var log_speed = 0;
 	var score = 0;
 	var highscore = 0;
 	var min_player_y = 495; //Used for progression scoring
+	var mixer = new Mixer();
 	
 	//FPS variables
 	var lastLoop = new Date;
@@ -256,6 +255,7 @@ function Frogger_game(){
 	
 	var gameover = function()
 	{
+		mixer.play("gameover");
 		level_number = 1;
 		score = 0;
 		lives = 5;
@@ -294,6 +294,7 @@ function Frogger_game(){
 					this.y += step_size;
 					facing_direction = 1;
 				}
+				mixer.play("jump");
 				this.move_vert = 0;
 			}
 			else if(this.move_horiz != 0)
@@ -305,6 +306,7 @@ function Frogger_game(){
 					this.x -= step_size;
 					facing_direction = 2;
 				}
+				mixer.play("jump");
 				this.move_horiz = 0;
 			}
 			
@@ -337,6 +339,7 @@ function Frogger_game(){
 				{
 					
 					if(object_list[i].type == "Car"){
+						mixer.play("carhit");
 						die();
 					} else if(object_list[i].type == "Log"){
 						onLog = true;
@@ -345,6 +348,7 @@ function Frogger_game(){
 						if(object_list[i].occupied){
 							die();
 						} else if(!(object_list[i].occupied)){
+							mixer.play("safe");
 							object_list[i].become_occupied();
 							onLog = true;
 							player.reset();
@@ -369,6 +373,7 @@ function Frogger_game(){
 		
 		var die = function()
 		{
+			mixer.play("death");
 			player.reset();
 			lives--;
 			if(lives <= 0){
@@ -567,7 +572,6 @@ function Frogger_game(){
 		{
 			this.occupied = true;
 			score += 50;
-			console.log("Yay");
 		}
 		
 		this.reset = function()
@@ -577,4 +581,22 @@ function Frogger_game(){
 			this.occupied = false;
 		}
 	}
+}
+
+//Used to control audio resources
+/*Available Sounds:
+	jump
+	safe
+	getitem
+	death
+	carhit
+	gameover
+*/
+function Mixer()
+{
+	this.play = function(sound_type)
+	{
+		sound = document.getElementById(sound_type);
+		sound.play();
+	}	
 }
