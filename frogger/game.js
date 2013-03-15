@@ -20,8 +20,7 @@ function Frogger_game(){
 	//Default game values
 	var startx = 190; //Player starting x-pos
 	var starty = 495; //Player starting y-pos
-	var lives = 3;
-	var gameover = false;
+	var lives = 5;
 	var level_number = 1;
 	var time = 0;
 	var vehicle_speed = 0;
@@ -178,7 +177,7 @@ function Frogger_game(){
 		ctx.fillText("Score: " + score, 1, 560);
 		ctx.fillText("Highscore: 0", 100, 560);
 		ctx.font = "20px Times New Roman";
-		ctx.fillText("Level: " + level_number, 60, 542);
+		ctx.fillText("Level: " + level_number, 360, 542);
 		
 		//Draw Objects:
 		for (i = 0; i < object_list.length; i++)
@@ -200,12 +199,7 @@ function Frogger_game(){
 			object_list[i].reset();
 		}
 		
-		lives = 3;
-		gameover = false;
-		level_number = 1;
 		time = 0;
-		vehicle_speed = 0;
-		log_speed = 0;
 	}
 	
 	var is_colliding = function(x1, y1, width1, height1, x2, y2, width2, height2)
@@ -249,6 +243,14 @@ function Frogger_game(){
 		{
 			initialize_new_round();
 		}
+	}
+	
+	var gameover = function()
+	{
+		level = 1;
+		score = 0;
+		lives = 5;
+		initialize_new_round();
 	}
 	/////////////////////////////////////////////////
 
@@ -358,7 +360,11 @@ function Frogger_game(){
 		
 		var die = function()
 		{
-			console.log("Splat");
+			player.reset();
+			lives--;
+			if(lives <= 0){
+				gameover();
+			}
 		}
 		
 		this.reset = function()
