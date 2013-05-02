@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Comp20:A6 </title>
+</head>
+
+<body>
+	<h2> Comp 20 A6: Security Analysis  </h2>
+	
+	<h3>Introduction: </h3>
+	<p> The score centre web app is designed to store the score submissions of games
+		securely, and return the users' information upon request. Since anyone can submit
+		or access scores, this is assumed to be part of the functionality of the app, 
+		and doesn't pose a security concern.
+	</p>
+	<p>
+		The aim of this report is to analyze the security underlying the application,
+		and see if users information is safe from being tampered with by an external
+		source, or if the app is vulnerable to attacks from malicious users rendering the
+		service unavailable.
+	</p>
+	
+	<h3>Methodology: </h3>
+	<p>
+		The source code for the scorecenter web app was first read to look for potential
+		security risks, and then probed by launching the site as a heroku app, and hosting
+		it on the local machine. I attempted to use some of the security software such as 
+		BurpSuite, however I failed to figure out how to use the software effectively.		
+	</p>
+	<p>
+		Security risks that were analyzed were the safety of user data, the ability to 
+		perform cross site scripting and the limits on the uploading of user information.
+	</p>
+	
+	<h3>Abstract of Findings: </h3>
+	<p>
+	1) Lack of security on user input
+	<ul>
+		<li>Any user can send or receive data from any web page on the app</li>
+		<li>Potential for malicious users to upload scripts to the database crashing the 
+		site or redirecting other users away from the index page on loading</li>
+		<li>By similar cross site scripting, malicious users can change or delte other
+		users scores. </li>
+		<li> users can send very large amounts of data crashing the app and filling up the
+		 app's available storage.
+	</ul>
+	</p>
+	
+	<p>
+	1) No User Verfication
+	<ul>
+		<li>Any user can observe anyone else's data</li>
+		<li>If the app were expanded to store users sensitive data, this data can be easily
+		 accessed by a remote script.</li>
+		<li> Marketing companies can crawl through user scores and target users based
+		on the information provided by this app.</li>
+
+	</ul>
+	</p>
+	
+	<h3>Issues Found: </h3>
+	<p>
+	1) Issue: No Sanitation of User Input
+	<ul>
+		<li>Location: web.js</li>
+		<li>Severity of Issue: High</li>
+		<li>Description of Issue: User submissions are not sanitized or analyzed for
+		 security risks in any way. This means cross site scripting may occur, for example
+		  a user can submit some code in script tags, such as redirecting from the site, 
+		  which would be executed any time the information is called for, which is always
+		   on the index page.</li>
+		<li>Resolution: Sanitize the user input. Check for suspicious characters such as
+		 curly brackets or angled brackets, and either remove them from the input, or
+		 reject the user input outright.</li>
+	</ul>
+	</p>
+	
+	<p>
+	2) Issue: No Limit on User Submissions
+	<ul>
+		<li>Location: web.js</li>
+		<li>Severity of Issue: High</li>
+		<li>Description of Issue: There is no limit to how much information a user can 
+		submit. This poses an issue as the mongodatabase has a finite size. It wouldn't
+		take long to create a script that continuously submits valid inputs, or even
+		send one input with a terabyte string in one of the fields, that would 
+		immediately deplete all available space in the database, preventing any further
+		submissions, or crashing the website when accessing the index (as the client
+		side downloads all the information).</li>
+		<li>Resolution: Check for the size of the user submission. If it is over a certain
+		limit (e.g. 1mb) reject the submission. Also have a script that checks to see if 
+		submissions from a user are coming in with unusual frequency (e.g. from an external
+		script) and reject those submissions.</li>
+	</ul>
+	</p>
+	
+	<p>
+	3) Issue: Cross Origin Sharing Enabled on All Routes
+	<ul>
+		<li>Location: web.js</li>
+		<li>Severity of Issue: Medium</li>
+		<li>Description of Issue: Cross Origin Sharing is enabled on on routes in the app
+		meaning that any web page can send and receive data directly from the app's 
+		various api's. this is not a huge issue at the moment as all the present api's
+		either require or benefit from the cross origin sharing, but with future 
+		development some routes might need to be protected, e.g. routes containing 
+		sensitive user information, and cross origin will still be enabled.</li>
+		<li>Resolution: The routes to have cross origin enabled should be coded in 
+		explicitly rather than doing app.all, do it in the definition of each route.</li>
+	</ul>
+	</p>
+	
+	<p>
+	4) Issue: No User Verification
+	<ul>
+		<li>Location: web.js</li>
+		<li>Severity of Issue: Low</li>
+		<li>Description of Issue: Anyone can search for anyone else's high score. If a
+		user playing a game values their privacy, they dont have that with this app as
+		any other user can see exactly how well they have done in all their games using 
+		the user search page. A script by a marketing company could crawl through
+		scores by users to find ones with higher relative scores and taget them for 
+		gaming marketing.</li>
+		<li>Resolution: A registration system for the site which could allow users
+		to make their scores private.</li>
+	</ul>
+	</p>
+	
+	<h3>Conclusions: </h3>
+	<p>
+		There are many good features of the scorecenter app yet it suffers from many immediate
+		security risks that would allow even low skilled malicious users to manipulate information
+		stored in the database and cause the site to crash or behave erratically. There is also
+		the potentially expensive issue of it being very easy to cause the database to run
+		out of room. There are also issues preventing good security of the features of the app were expanded, such as
+		cross origin sharing for all pages and no user verification.
+	</p>
+	
+</body>
+</html>
